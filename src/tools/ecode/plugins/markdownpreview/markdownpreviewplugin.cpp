@@ -62,4 +62,35 @@ void MarkdownPreviewPlugin::onUnregisterEditor( UICodeEditor* editor ) {
 	mPreviews.erase( editor );
 }
 
+void MarkdownPreviewPlugin::updatePreview( UICodeEditor* editor ) {
+	if ( !editorExists( editor ) )
+		return;
+
+	auto* splitter = getManager()->getSplitter();
+	if ( !splitter )
+		return;
+
+	Lock l( mMutex );
+	auto it = mPreviews.find( editor );
+	UIMarkdownView* view =
+		( it != mPreviews.end() ) ? it->second : nullptr;
+
+	// Pointer validieren: Tab könnte inzwischen geschlossen sein
+	if ( view && !splitter->ownedWidgetExists( view ) ) {
+		mPreviews.erase( it );
+		view = nullptr;
+	}
+
+	if ( !view ) {
+		view = UIMarkdownView::New();
+		mPreviews[editor] = view;
+		auto [tab, w] = splitter->createWidget(
+			view, i18n( "markdown_preview", "Markdown Preview" ) );
+		(void)tab; (void)w;
+	}
+
+	const auto text = editor->getDocument().getText().toUtf8();
+	view->loadFromString( text );
+}
+
 } // namespace ecode
