@@ -33,8 +33,9 @@ class MarkdownPreviewPlugin : public PluginBase {
 
 	virtual void onRegisterListeners( UICodeEditor* editor, std::vector<Uint32>& listeners ) override;
 	virtual void onUnregisterEditor( UICodeEditor* editor ) override;
+	virtual void onDocumentChanged( UICodeEditor* editor, TextDocument* oldDoc ) override;
 	virtual bool onCreateContextMenu( UICodeEditor* editor, UIPopUpMenu* menu,
-									   const Vector2i& position, const Uint32& flags ) override;
+					  const Vector2i& position, const Uint32& flags ) override;
 
   private:
 	void updatePreview( UICodeEditor* editor );

@@ -81,3 +81,6 @@ ecode.dmg
 /projects/android-project/.project
 /projects/android-project/app/.project
 /design/
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+.ecode/project_build.json
