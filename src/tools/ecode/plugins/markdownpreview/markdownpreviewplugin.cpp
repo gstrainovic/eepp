@@ -33,4 +33,33 @@ MarkdownPreviewPlugin::~MarkdownPreviewPlugin() {
 	// PluginBase cleanup of editors/listeners follows
 }
 
+bool MarkdownPreviewPlugin::isMarkdownFile( UICodeEditor* editor ) {
+	const auto& path = editor->getDocument().getFilePath();
+	return String::endsWith( path, ".md" ) ||
+		   String::endsWith( path, ".markdown" );
+}
+
+void MarkdownPreviewPlugin::onRegisterListeners( UICodeEditor* editor,
+												  std::vector<Uint32>& listeners ) {
+	if ( !isMarkdownFile( editor ) )
+		return;
+
+	listeners.push_back(
+		editor->on( Event::OnTextChanged, [this, editor]( const Event* ) {
+			editor->debounce( [this, editor] { updatePreview( editor ); },
+							  Milliseconds( 500 ), DebounceId );
+		} ) );
+
+	// Befehl registrieren
+	editor->getDocument().setCommand(
+		"open-markdown-preview",
+		[this, editor]( TextDocument::Client* ) { updatePreview( editor ); } );
+}
+
+void MarkdownPreviewPlugin::onUnregisterEditor( UICodeEditor* editor ) {
+	editor->removeActionsByTag( DebounceId );
+	Lock l( mMutex );
+	mPreviews.erase( editor );
+}
+
 } // namespace ecode
