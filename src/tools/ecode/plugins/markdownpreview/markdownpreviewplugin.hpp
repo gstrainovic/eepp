@@ -6,6 +6,7 @@
 #include <eepp/config.hpp>
 #include <eepp/ui/uicodeeditor.hpp>
 #include <eepp/ui/uimarkdownview.hpp>
+#include <eepp/ui/uiscrollview.hpp>
 using namespace EE;
 using namespace EE::UI;
 
@@ -41,7 +42,7 @@ class MarkdownPreviewPlugin : public PluginBase {
 	void updatePreview( UICodeEditor* editor );
 	bool isMarkdownFile( UICodeEditor* editor );
 
-	UnorderedMap<UICodeEditor*, UIMarkdownView*> mPreviews;
+	UnorderedMap<UICodeEditor*, UIScrollView*> mPreviews;
 
 	MarkdownPreviewPlugin( PluginManager* pluginManager, bool sync );
 };
