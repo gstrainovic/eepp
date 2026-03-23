@@ -31,6 +31,7 @@
 #include "plugins/git/gitplugin.hpp"
 #include "plugins/linter/linterplugin.hpp"
 #include "plugins/lsp/lspclientplugin.hpp"
+#include "plugins/markdownpreview/markdownpreviewplugin.hpp"
 #include "plugins/spellchecker/spellcheckerplugin.hpp"
 #include "plugins/xmltools/xmltoolsplugin.hpp"
 
@@ -810,6 +811,7 @@ void App::initPluginManager() {
 	mPluginManager->registerPlugin( AIAssistantPlugin::Definition() );
 	mPluginManager->registerPlugin( SpellCheckerPlugin::Definition() );
 	mPluginManager->registerPlugin( DiscordRPCplugin::Definition() );
+	mPluginManager->registerPlugin( MarkdownPreviewPlugin::Definition() );
 	mPluginManager->setPluginsDisabled( mDisablePlugins );
 }
 
