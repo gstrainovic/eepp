@@ -1,6 +1,7 @@
 #include "markdownpreviewplugin.hpp"
 #include "../pluginmanager.hpp"
 #include <eepp/system/log.hpp>
+#include <eepp/system/clock.hpp>
 using namespace EE::System;
 
 namespace ecode {
@@ -18,15 +19,18 @@ Plugin* MarkdownPreviewPlugin::NewSync( PluginManager* pluginManager ) {
 
 MarkdownPreviewPlugin::MarkdownPreviewPlugin( PluginManager* pluginManager, bool sync )
 	: PluginBase( pluginManager ) {
-	// Kein async-Load nötig: kein Config-File, keine externe Ressource
+	Clock clock;
+	// Kein Config-Loading nötig — synchrone Initialisierung
 	mReady = true;
 	subscribeFileSystemListener();
 	fireReadyCbs();
-	setReady();
+	setReady( clock.getElapsedTime() );
 }
 
 MarkdownPreviewPlugin::~MarkdownPreviewPlugin() {
-	// PluginBase::~PluginBase räumt mEditors/Listener auf
+	Lock l( mMutex );
+	mPreviews.clear();
+	// PluginBase cleanup of editors/listeners follows
 }
 
 } // namespace ecode
