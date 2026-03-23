@@ -93,4 +93,18 @@ void MarkdownPreviewPlugin::updatePreview( UICodeEditor* editor ) {
 	view->loadFromString( text );
 }
 
+bool MarkdownPreviewPlugin::onCreateContextMenu( UICodeEditor* editor,
+												  UIPopUpMenu* menu,
+												  const Vector2i& /*position*/,
+												  const Uint32& /*flags*/ ) {
+	if ( !isMarkdownFile( editor ) )
+		return false;
+
+	menu->addSeparator();
+	menu->add( i18n( "open_markdown_preview", "Open Markdown Preview" ),
+			   nullptr, "open-markdown-preview" )
+		->setId( "open-markdown-preview" );
+	return false; // false = Menü nicht schliessen
+}
+
 } // namespace ecode
