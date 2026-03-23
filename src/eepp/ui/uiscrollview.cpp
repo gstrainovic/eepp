@@ -437,7 +437,7 @@ bool UIScrollView::applyProperty( const StyleSheetProperty& attribute ) {
 Uint32 UIScrollView::onMessage( const NodeMessage* Msg ) {
 	switch ( Msg->getMsg() ) {
 		case NodeMessage::MouseUp: {
-			if ( mVScroll->isEnabled() && 0 != mScrollView->getSize().getHeight() &&
+			if ( mScrollView && mVScroll->isEnabled() && 0 != mScrollView->getSize().getHeight() &&
 				 isTouchOverAllowedChildren() && Msg->getSender()->isUINode() &&
 				 !Msg->getSender()->asType<UINode>()->isScrollable() ) {
 				if ( Msg->getFlags() & EE_BUTTON_WUMASK ) {

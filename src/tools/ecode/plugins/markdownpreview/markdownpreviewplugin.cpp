@@ -91,33 +91,52 @@ void MarkdownPreviewPlugin::updatePreview( UICodeEditor* editor ) {
 
 	Lock l( mMutex );
 	auto it = mPreviews.find( editor );
-	UIMarkdownView* view =
+	UIScrollView* scrollView =
 		( it != mPreviews.end() ) ? it->second : nullptr;
+	UIMarkdownView* view = nullptr;
 
 	// Pointer validieren: Tab könnte inzwischen geschlossen sein
-	if ( view && !splitter->ownedWidgetExists( view ) ) {
+	if ( scrollView && !splitter->ownedWidgetExists( scrollView ) ) {
 		mPreviews.erase( it );
-		view = nullptr;
+		scrollView = nullptr;
 	}
 
-	if ( !view ) {
+	if ( !scrollView ) {
+		// ScrollView erstellen
+		scrollView = UIScrollView::New();
+		scrollView->setLayoutWidthPolicy( SizePolicy::MatchParent );
+		scrollView->setLayoutHeightPolicy( SizePolicy::MatchParent );
+
+		// MarkdownView erstellen
 		view = UIMarkdownView::New();
-		mPreviews[editor] = view;
-		view->on( Event::OnClose, [this, editor, view]( const Event* ) {
-			Lock l( mMutex );
+		view->setLayoutWidthPolicy( SizePolicy::MatchParent );
+		view->setLayoutHeightPolicy( SizePolicy::WrapContent );
 		
-auto it = mPreviews.find( editor );
-			if ( it != mPreviews.end() && it->second == view ) {
+		// In ScrollView einfügen - dies setzt mScrollView automatisch
+		view->setParent( scrollView );
+
+		mPreviews[editor] = scrollView;
+		printf( "[MarkdownPreview] Created new ScrollView with UIMarkdownView: %p\n", (void*)scrollView );
+
+		scrollView->on( Event::OnClose, [this, editor, scrollView]( const Event* ) {
+			Lock l( mMutex );
+			auto it = mPreviews.find( editor );
+			if ( it != mPreviews.end() && it->second == scrollView ) {
 				mPreviews.erase( it );
 			}
 		} );
 		auto [tab, w] = splitter->createWidget(
-			view, i18n( "markdown_preview", "Markdown Preview" ) );
+			scrollView, i18n( "markdown_preview", "Markdown Preview" ) );
 		(void)tab; (void)w;
+	} else {
+		// view aus dem bestehenden scrollView holen
+		view = static_cast<UIMarkdownView*>( scrollView->getContainer()->getChildAt( 0 ) );
 	}
 
 	const auto text = editor->getDocument().getText().toUtf8();
-	view->loadFromString( text );
+	printf( "[MarkdownPreview] Loading markdown, length=%zu\n", text.size() );
+	if ( view )
+		view->loadFromString( text );
 }
 
 bool MarkdownPreviewPlugin::onCreateContextMenu( UICodeEditor* editor,
