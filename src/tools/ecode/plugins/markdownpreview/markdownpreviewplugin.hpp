@@ -27,14 +27,14 @@ class MarkdownPreviewPlugin : public PluginBase {
 
 	virtual ~MarkdownPreviewPlugin();
 
-	std::string getId() { return Definition().id; }
-	std::string getTitle() { return Definition().name; }
-	std::string getDescription() { return Definition().description; }
+	std::string getId() override { return Definition().id; }
+	std::string getTitle() override { return Definition().name; }
+	std::string getDescription() override { return Definition().description; }
 
-	void onRegisterListeners( UICodeEditor* editor, std::vector<Uint32>& listeners );
-	void onUnregisterEditor( UICodeEditor* editor );
-	bool onCreateContextMenu( UICodeEditor* editor, UIPopUpMenu* menu,
-							  const Vector2i& position, const Uint32& flags );
+	virtual void onRegisterListeners( UICodeEditor* editor, std::vector<Uint32>& listeners ) override;
+	virtual void onUnregisterEditor( UICodeEditor* editor ) override;
+	virtual bool onCreateContextMenu( UICodeEditor* editor, UIPopUpMenu* menu,
+									   const Vector2i& position, const Uint32& flags ) override;
 
   private:
 	void updatePreview( UICodeEditor* editor );
